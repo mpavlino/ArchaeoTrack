@@ -1,0 +1,289 @@
+﻿@page "/"
+@using System.Text.Json
+@inject IJSRuntime js;
+
+<h1>Arheološki zapisi</h1>
+
+<!-- Button to open the modal for adding a new note -->
+<button class="btn btn-primary" @onclick="OpenModal"><i class="bi-plus-circle"></i> Dodaj novi zapis</button>
+
+<!-- Display notes if available -->
+@if( notes == null || !notes.Any() ) {
+    <p><em>Nema zapisa.</em></p>
+}
+else {
+    <table class="table table-responsive mt-3">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Broj</th>
+                <th>Sadržaj</th>
+                <th>Akcija</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach( var note in notes ) {
+                <tr>
+                    <td>@note.Date.ToShortDateString()</td>
+                    <td>@note.Number</td>
+                    <td>@note.Description</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" @onclick="() => EditNote(note)">
+                            <i class="bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteNote(note)">
+                            <i class="bi-trash"></i>
+                        </button>
+                        <button class="btn btn-success btn-sm" @onclick="() => ViewNoteDetails(note)">
+                            <i class="bi-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- Modal window for the input form -->
+@if( showModal ) {
+    <div class="modal fade show" tabindex="-1" style="display:block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Novi zapis</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="newNote" OnValidSubmit="HandleValidSubmit">
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Datum</label>
+                            <InputDate id="date" class="form-control" @bind-Value="newNote.Date" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="number" class="form-label">Broj</label>
+                            <InputNumber id="number" class="form-control" @bind-Value="newNote.Number" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Lokacija</label>
+                            <InputText id="location" class="form-control" @bind-Value="newNote.Location" />
+                            <!-- Button to get current location -->
+                            <button type="button" class="btn btn-secondary mt-2" @onclick="GetCurrentLocation">Preuzmi trenutnu lokaciju</button>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Sadržaj</label>
+                            <InputTextArea id="description" class="form-control" @bind-Value="newNote.Description" />
+                        </div>
+
+                        <!-- Canvas for sketching -->
+                        <div class="mb-3">
+                            <label class="form-label">Skica</label>
+                            <canvas id="sketchCanvas" width="340" height="200" style="border: 1px solid #000;"></canvas>
+                            <br />
+                            <button type="button" class="btn btn-secondary mt-2" @onclick="SaveSketch">Spremi skicu</button>
+                            <input type="hidden" @bind="@newNote.Sketch" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Spremi</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop fade show"></div>
+    </div>
+}
+
+<!-- Read-only modal for viewing the note -->
+@if( showDetailsModal && selectedNote != null ) {
+    <div class="modal fade show" tabindex="-1" style="display:block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pogledaj zapis</h5>
+                    <button type="button" class="btn-close" @onclick="CloseDetailsModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Datum</label>
+                        <p>@selectedNote.Date.ToShortDateString()</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="number" class="form-label">Broj</label>
+                        <p>@selectedNote.Number</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Lokacija</label>
+                        <p>@selectedNote.Location</p>
+                        <!-- Google Maps iframe -->
+                        @if( !string.IsNullOrWhiteSpace( selectedNote.Location ) ) {
+                            <iframe width="100%"
+                                    height="300"
+                                    frameborder="0"
+                                    style="border:0"
+                                    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDLji_mHwZ2tfOFO4549SKPQz2qnYYJocA&q=@selectedNote.Location"
+                                    allowfullscreen>
+                            </iframe>
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Sadržaj</label>
+                        <p>@selectedNote.Description</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sketch" class="form-label">Skica</label>
+                        @if( !string.IsNullOrEmpty( selectedNote.Sketch ) ) {
+                            <img src="@selectedNote.Sketch" alt="Sketch" style="max-width: 100%; height: auto;" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop fade show"></div>
+    </div>
+}
+
+@code {
+    private List<Note> notes = new List<Note>(); // List to store notes
+    private Note newNote = new Note(); // Object for input form binding
+    private Note? selectedNote = null; // Selected note for read-only modal
+    private bool showModal = false; // Flag to show/hide input modal
+    private bool showDetailsModal = false; // Flag to show/hide read-only modal
+
+    // Method to open the input modal
+    private void OpenModal() {
+        newNote = new Note(); // Reset the form for a new entry
+        showModal = true;
+        js.InvokeVoidAsync( "initializeCanvas" );
+    }
+
+    // Method to close the input modal
+    private void CloseModal() {
+        showModal = false;
+    }
+
+    // Method to open the read-only modal with selected note details
+    private void ViewNoteDetails( Note note ) {
+        selectedNote = note;
+        showDetailsModal = true;
+    }
+
+    // Method to close the read-only modal
+    private void CloseDetailsModal() {
+        showDetailsModal = false;
+    }
+
+    // Method to handle the form submission
+    private void HandleValidSubmit() {
+        try {
+            if( newNote.Id > 0 ) {
+                var note = notes.SingleOrDefault( n => n.Id == newNote.Id );
+                if( note != null ) {
+                    note.Date = newNote.Date;
+                    note.Number = newNote.Number;
+                    note.Location = newNote.Location;
+                    note.Description = newNote.Description;
+                    note.Sketch = newNote.Sketch;
+                }
+            }
+            else {
+                notes.Add( new Note {
+                        Id = notes.Count + 1,
+                        Date = newNote.Date,
+                        Number = newNote.Number,
+                        Location = newNote.Location,
+                        Description = newNote.Description,
+                        Sketch = newNote.Sketch
+                    } );
+            }
+
+            // Reset the form and close the modal
+            newNote = new Note();
+            CloseModal();
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error saving note: {ex.Message}" );
+        }
+    }
+
+    // Method to edit a note
+    private void EditNote( Note note ) {
+        try {
+            newNote = note; // Set the selected note for editing
+            showModal = true; // Open the modal
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error editing note: {ex.Message}" );
+        }
+    }
+
+    // Method to delete a note
+    private void DeleteNote( Note note ) {
+        try {
+            notes.Remove( note ); // Remove the note from the list
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error deleting note: {ex.Message}" );
+        }
+    }
+
+    private async Task<string> GetLocationName( double latitude, double longitude ) {
+        try {
+            string apiKey = "AIzaSyDLji_mHwZ2tfOFO4549SKPQz2qnYYJocA"; // Replace with your API key
+            string url = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={apiKey}";
+
+            using( var httpClient = new HttpClient() ) {
+                var response = await httpClient.GetStringAsync( url );
+                var json = JsonDocument.Parse( response );
+                var results = json.RootElement.GetProperty( "results" );
+
+                if( results.GetArrayLength() > 0 ) {
+                    // Return the formatted address
+                    return results[0].GetProperty( "formatted_address" ).GetString();
+                }
+            }
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error getting location name: {ex.Message}" );
+        }
+        return "Nepoznata lokacija";
+    }
+
+    // Method to get the current location
+    private async Task GetCurrentLocation() {
+        try {
+            var location = await Geolocation.Default.GetLocationAsync( new GeolocationRequest {
+                    DesiredAccuracy = GeolocationAccuracy.Medium,
+                    Timeout = TimeSpan.FromSeconds( 30 )
+                } );
+
+            if( location != null ) {
+                // Get location name
+                string locationName = await GetLocationName( location.Latitude, location.Longitude );
+                newNote.Location = locationName; // Store the name instead of coordinates
+            }
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error getting location: {ex.Message}" );
+        }
+    }
+
+    // Method to save the sketch as Base64
+    private async Task SaveSketch() {
+        try {
+            var sketchData = await js.InvokeAsync<string>( "getCanvasImage" );
+            newNote.Sketch = sketchData; // Store the Base64 image in the note
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error saving sketch: {ex.Message}" );
+        }
+    }
+
+    // Note class for storing data
+    private class Note {
+        public int Id { get; set; }
+        public DateOnly Date { get; set; } = DateOnly.FromDateTime( DateTime.Now );
+        public int Number { get; set; }
+        public string? Location { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string? Sketch { get; set; } // Property to store the sketch image
+    }
+}
