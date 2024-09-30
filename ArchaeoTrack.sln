@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArchaeoTrack", "ArchaeoTrack\ArchaeoTrack.csproj", "{9BD5CA87-83F7-4E7D-8DB7-E18193319070}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArchaeoTrack", "ArchaeoTrack\ArchaeoTrack.csproj", "{9BD5CA87-83F7-4E7D-8DB7-E18193319070}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArcheoTrack.API", "ArcheoTrack.API\ArcheoTrack.API.csproj", "{F5F73DCA-5541-4995-9D6D-A8214E932A5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArcheoTrack.DAL", "ArcheoTrack.DAL\ArcheoTrack.DAL.csproj", "{DCA8B4FE-49CD-4E0A-8349-B8DB70E1AE8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArcheoTrack.Model", "ArcheoTrack.Model\ArcheoTrack.Model.csproj", "{4392846A-AEE8-490E-A5F2-A59CDFF68DCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +23,18 @@ Global
 		{9BD5CA87-83F7-4E7D-8DB7-E18193319070}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BD5CA87-83F7-4E7D-8DB7-E18193319070}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9BD5CA87-83F7-4E7D-8DB7-E18193319070}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F5F73DCA-5541-4995-9D6D-A8214E932A5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5F73DCA-5541-4995-9D6D-A8214E932A5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5F73DCA-5541-4995-9D6D-A8214E932A5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5F73DCA-5541-4995-9D6D-A8214E932A5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCA8B4FE-49CD-4E0A-8349-B8DB70E1AE8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCA8B4FE-49CD-4E0A-8349-B8DB70E1AE8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCA8B4FE-49CD-4E0A-8349-B8DB70E1AE8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCA8B4FE-49CD-4E0A-8349-B8DB70E1AE8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4392846A-AEE8-490E-A5F2-A59CDFF68DCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4392846A-AEE8-490E-A5F2-A59CDFF68DCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4392846A-AEE8-490E-A5F2-A59CDFF68DCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4392846A-AEE8-490E-A5F2-A59CDFF68DCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

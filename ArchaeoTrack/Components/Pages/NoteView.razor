@@ -1,0 +1,47 @@
+﻿@page "/noteview/{id:int}"
+@using ArcheoTrack.Model
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h1>Pogledaj zapis</h1>
+
+@if( note != null ) {
+    <div class="mb-3">
+        <label for="date" class="form-label">Datum</label>
+        <p>@note.Date.ToShortDateString()</p>
+    </div>
+    <div class="mb-3">
+        <label for="number" class="form-label">Broj</label>
+        <p>@note.Number</p>
+    </div>
+    <div class="mb-3">
+        <label for="location" class="form-label">Lokacija</label>
+        <p>@note.Location</p>
+        @if( !string.IsNullOrWhiteSpace( note.Location ) ) {
+            <iframe width="100%" height="300" frameborder="0" style="border:0"
+                    src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=@note.Location"
+                    allowfullscreen>
+            </iframe>
+        }
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Sadržaj</label>
+        <p>@note.Description</p>
+    </div>
+    <div class="mb-3">
+        <label for="sketch" class="form-label">Skica</label>
+        @if( !string.IsNullOrEmpty( note.Sketch ) ) {
+            <img src="@note.Sketch" alt="Sketch" style="max-width: 100%; height: auto;" />
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private Note note;
+
+    protected override async Task OnInitializedAsync() {
+        note = await HttpClient.GetFromJsonAsync<Note>( $"api/notes/{id}" );
+    }
+}

@@ -1,0 +1,76 @@
+﻿@page "/notes"
+@using ArcheoTrack.Model
+@* @inject HttpClient HttpClient *@
+@inject ArcheoTrack.Repositories.NotesRepository NotesRepository
+@inject NavigationManager NavigationManager
+
+<h1>Arheološki zapisi</h1>
+
+<button class="btn btn-primary" @onclick="NavigateToCreateNote"><i class="bi-plus-circle"></i> Dodaj novi zapis</button>
+
+@if( notes == null || !notes.Any() ) {
+    <p><em>Nema zapisa.</em></p>
+}
+else {
+    <table class="table table-responsive mt-3">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Broj</th>
+                <th>Sadržaj</th>
+                <th>Akcija</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach( var note in notes ) {
+                <tr>
+                    <td>@note.Date.ToShortDateString()</td>
+                    <td>@note.Number</td>
+                    <td>@note.Description</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" @onclick="() => NavigateToEditNote(note.Id)">
+                            <i class="bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteNote(note.Id)">
+                            <i class="bi-trash"></i>
+                        </button>
+                        <button class="btn btn-success btn-sm" @onclick="() => NavigateToViewNote(note.Id)">
+                            <i class="bi-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Note> notes = new List<Note>();
+
+    protected override async Task OnInitializedAsync() {
+        notes = await NotesRepository.GetNotesAsync();
+    }
+
+
+    private void NavigateToCreateNote() {
+        NavigationManager.NavigateTo( "/noteedit" );
+    }
+
+    private void NavigateToEditNote( int id ) {
+        NavigationManager.NavigateTo( $"/noteedit/{id}" );
+    }
+
+    private void NavigateToViewNote( int id ) {
+        NavigationManager.NavigateTo( $"/noteview/{id}" );
+    }
+
+    private async Task DeleteNote( int id ) {
+        try {
+            await NotesRepository.DeleteNoteAsync( id );
+            await NotesRepository.GetNotesAsync();
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error deleting note: {ex.Message}" );
+        }
+    }
+}

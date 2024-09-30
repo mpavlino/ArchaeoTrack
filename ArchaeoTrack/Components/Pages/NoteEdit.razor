@@ -1,0 +1,172 @@
+﻿@page "/noteedit/{id:int?}"
+@using ArcheoTrack.Model
+@using System.Text.Json
+@* @inject HttpClient HttpClient *@
+@inject ArcheoTrack.Repositories.NotesRepository NotesRepository
+@inject NavigationManager NavigationManager
+@inject IJSRuntime js;
+
+<h1>@(id == null ? "Novi zapis" : "Uredi zapis")</h1>
+
+<EditForm Model="note" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="date" class="form-label">Datum</label>
+        <InputDate id="date" class="form-control" @bind-Value="note.Date" />
+    </div>
+    <div class="mb-3">
+        <label for="number" class="form-label">Broj</label>
+        <InputNumber id="number" class="form-control" @bind-Value="note.Number" />
+    </div>
+    <div class="mb-3">
+        <label for="location" class="form-label">Lokacija</label>
+        <InputText id="location" class="form-control" @bind-Value="note.Location" />
+        <button type="button" class="btn btn-secondary mt-2" @onclick="GetCurrentLocation">Preuzmi trenutnu lokaciju</button>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Sadržaj</label>
+        <InputTextArea id="description" class="form-control" @bind-Value="note.Description" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Alati za skiciranje</label>
+        <div class="toolbox">
+            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "freeform")'>Freeform</button>
+            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "line")'>Line</button>
+            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "circle")'>Circle</button>
+            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "rectangle")'>Rectangle</button>
+            <button type="button" class="btn btn-sm btn-warning mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "eraser")'>Eraser</button>
+            <button type="button" class="btn btn-sm btn-danger mt-2" @onclick='() => js.InvokeVoidAsync("clearCanvas")'>Obriši skicu</button>
+        </div>
+        <div class="color-picker">
+            <label>Boja:</label>
+            <input type="color" @oninput="e => SetPenColor(e.Value.ToString())" value="#000000" />
+        </div>
+        <div class="pen-size">
+            <label>Veličina olovke:</label>
+            <input type="range" min="1" max="10" @oninput="e => SetPenSize(int.Parse(e.Value.ToString()))" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        @* <label for="sketchCanvas" class="form-label">Skica</label> *@
+        <div style="max-width: 500px; height: 300px; position: relative;">
+            <canvas id="sketchCanvas" width="500" height="300" style="width: 100%; height: 100%; border:1px solid #000;"></canvas>
+        </div>
+        <br />
+        <button type="button" class="btn btn-primary mt-2" @onclick="SaveSketch">Spremi skicu</button>
+    </div>
+    <button type="submit" class="btn btn-primary">Spremi</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+    private Note note = new Note();
+
+    protected override async Task OnAfterRenderAsync( bool firstRender ) {
+        try {
+            if( firstRender ) {
+                await js.InvokeVoidAsync( "initializeCanvas" );
+            }
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error initializing javascript: {ex.Message}" );
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id.HasValue)
+        {
+            note = await NotesRepository.GetNoteAsync( id.Value );
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            if (note.Id == 0) // Create new note
+            {
+                await NotesRepository.AddNoteAsync( note );
+                NavigationManager.NavigateTo("/notes");
+
+            }
+            else // Update existing note
+            {
+                await NotesRepository.UpdateNoteAsync( note );
+                NavigationManager.NavigateTo( "/notes" );
+            }
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error occured while saving note: {ex.Message}" );
+        }
+    }
+
+
+    private async Task<string> GetLocationName( double latitude, double longitude ) {
+        try {
+            string apiKey = "AIzaSyDLji_mHwZ2tfOFO4549SKPQz2qnYYJocA"; // Replace with your API key
+            string url = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={apiKey}";
+
+            using( var httpClient = new HttpClient() ) {
+                var response = await httpClient.GetStringAsync( url );
+                var json = JsonDocument.Parse( response );
+                var results = json.RootElement.GetProperty( "results" );
+
+                if( results.GetArrayLength() > 0 ) {
+                    // Return the formatted address
+                    return results[0].GetProperty( "formatted_address" ).GetString();
+                }
+            }
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error getting location name: {ex.Message}" );
+        }
+        return "Nepoznata lokacija";
+    }
+
+    // Method to get the current location
+    private async Task GetCurrentLocation() {
+        try {
+            var location = await Geolocation.Default.GetLocationAsync( new GeolocationRequest {
+                    DesiredAccuracy = GeolocationAccuracy.Medium,
+                    Timeout = TimeSpan.FromSeconds( 30 )
+                } );
+
+            if( location != null ) {
+                // Get location name
+                string locationName = await GetLocationName( location.Latitude, location.Longitude );
+                note.Location = locationName; // Store the name instead of coordinates
+            }
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error getting location: {ex.Message}" );
+        }
+    }
+
+    // Method to save the sketch as Base64
+    private async Task SaveSketch() {
+        try {
+            var sketchData = await js.InvokeAsync<string>( "getCanvasImage" );
+            note.Sketch = sketchData; // Store the Base64 image in the note
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error saving sketch: {ex.Message}" );
+        }
+    }
+
+    private async Task SetShapeMode( string mode ) {
+        await js.InvokeVoidAsync( "setShapeMode", mode );
+    }
+
+    private async Task SetPenColor( string color ) {
+        await js.InvokeVoidAsync( "setPenColor", color );
+    }
+
+    private async Task SetPenSize( int size ) {
+        await js.InvokeVoidAsync( "setPenSize", size );
+    }
+}

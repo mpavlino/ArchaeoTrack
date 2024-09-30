@@ -68,4 +68,9 @@
       <Folder Include="wwwroot\css\bootstrap-icons\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ArcheoTrack.DAL\ArcheoTrack.DAL.csproj" />
+      <ProjectReference Include="..\ArcheoTrack.Model\ArcheoTrack.Model.csproj" />
+    </ItemGroup>
+
 </Project>

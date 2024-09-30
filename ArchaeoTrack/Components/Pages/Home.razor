@@ -75,13 +75,33 @@ else {
                         </div>
 
                         <!-- Canvas for sketching -->
+                        <!-- Canvas for sketching -->
                         <div class="mb-3">
                             <label class="form-label">Skica</label>
                             <canvas id="sketchCanvas" width="340" height="200" style="border: 1px solid #000;"></canvas>
                             <br />
-                            <button type="button" class="btn btn-secondary mt-2" @onclick="SaveSketch">Spremi skicu</button>
+
+                            <!-- Color picker for pen color -->
+                            <label for="penColor" class="form-label">Boja olovke:</label>
+                            <input type="color" id="penColor" value="#000000" @onchange='(e) => js.InvokeVoidAsync("setPenColor", e.Value.ToString())' />
+
+                            <!-- Pen size selector -->
+                            <label for="penSize" class="form-label">Veličina olovke:</label>
+                            <input type="range" id="penSize" min="1" max="10" value="2" @onchange='(e) => js.InvokeVoidAsync("setPenSize", e.Value)' />
+
+                            <!-- Shape selection buttons -->
+                            <button type="button" class="btn btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "freeform")'>Freeform</button>
+                            <button type="button" class="btn btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "line")'>Line</button>
+                            <button type="button" class="btn btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "circle")'>Circle</button>
+                            <button type="button" class="btn btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "rectangle")'>Rectangle</button>
+                            <button type="button" class="btn btn-warning mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "eraser")'>Eraser</button>
+
+                            <br />
+                            <button type="button" class="btn btn-secondary mt-2" @onclick='SaveSketch'>Spremi skicu</button>
                             <input type="hidden" @bind="@newNote.Sketch" />
                         </div>
+
+
 
                         <button type="submit" class="btn btn-primary">Spremi</button>
                     </EditForm>
@@ -147,6 +167,19 @@ else {
     private Note? selectedNote = null; // Selected note for read-only modal
     private bool showModal = false; // Flag to show/hide input modal
     private bool showDetailsModal = false; // Flag to show/hide read-only modal
+
+    protected override async Task OnAfterRenderAsync( bool firstRender ) {
+        try
+        {
+            if (firstRender)
+            {
+                await js.InvokeVoidAsync("initializeCanvas");
+            }
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error initializing javascript: {ex.Message}" );
+        }
+    }
 
     // Method to open the input modal
     private void OpenModal() {
