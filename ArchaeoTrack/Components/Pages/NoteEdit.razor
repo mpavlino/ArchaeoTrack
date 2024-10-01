@@ -1,36 +1,81 @@
 ﻿@page "/noteedit/{id:int?}"
 @using ArcheoTrack.Model
 @using System.Text.Json
+@using System.Globalization
 @* @inject HttpClient HttpClient *@
 @inject ArcheoTrack.Repositories.NotesRepository NotesRepository
 @inject NavigationManager NavigationManager
 @inject IJSRuntime js;
 
-<h1>@(id == null ? "Novi zapis" : "Uredi zapis")</h1>
+<h2>@(id == null ? "Novi zapis" : "Uredi zapis")</h2>
 
 <EditForm Model="note" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div class="mb-3">
-        <label for="date" class="form-label">Datum</label>
+        <label for="location" class="form-label fw-bold">Projekt</label>
+        <InputText id="location" class="form-control" @bind-Value="note.Project" />
+    </div>
+    <div class="mb-3">
+        <label for="date" class="form-label fw-bold">Datum</label>
         <InputDate id="date" class="form-control" @bind-Value="note.Date" />
     </div>
     <div class="mb-3">
-        <label for="number" class="form-label">Broj</label>
+        <label for="location" class="form-label fw-bold">Objekt</label>
+        <InputText id="location" class="form-control" @bind-Value="note.Object" />
+    </div>
+    <div class="mb-3">
+        <label for="number" class="form-label fw-bold">Broj</label>
         <InputNumber id="number" class="form-control" @bind-Value="note.Number" />
     </div>
     <div class="mb-3">
-        <label for="location" class="form-label">Lokacija</label>
+        <label for="location" class="form-label fw-bold">Lokacija</label>
         <InputText id="location" class="form-control" @bind-Value="note.Location" />
-        <button type="button" class="btn btn-secondary mt-2" @onclick="GetCurrentLocation">Preuzmi trenutnu lokaciju</button>
+        <button type="button" class="btn btn-secondary mt-2" @onclick="GetCurrentLocation"><i class="bi-geo-alt-fill"></i> Preuzmi trenutnu lokaciju</button>
     </div>
     <div class="mb-3">
-        <label for="description" class="form-label">Sadržaj</label>
-        <InputTextArea id="description" class="form-control" @bind-Value="note.Description" />
+        <label for="location" class="form-label fw-bold">Vremenski uvjeti</label>
+        <InputText id="location" class="form-control" @bind-Value="note.Weather" />
     </div>
     <div class="mb-3">
-        <label class="form-label">Alati za skiciranje</label>
+        <label for="location" class="form-label fw-bold">Nalazi/Rezultati</label>
+        <InputText id="location" class="form-control" @bind-Value="note.Results" />
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label fw-bold">Sadržaj</label>
+        <BlazoredTextEditor @ref="textEditor" Placeholder="Enter description here...">
+            <ToolbarContent>
+                <select class="ql-header">
+                    <option selected=""></option>
+                    <option value="1"></option>
+                    <option value="2"></option>
+                    <option value="3"></option>
+                    <option value="4"></option>
+                    <option value="5"></option>
+                </select>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                </span>
+                <span class="ql-formats">
+                    <select class="ql-color"></select>
+                    <select class="ql-background"></select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                </span>
+            </ToolbarContent>
+        </BlazoredTextEditor>
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Alati za skiciranje</label>
         <div class="toolbox">
             <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "freeform")'>Freeform</button>
             <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "line")'>Line</button>
@@ -39,7 +84,7 @@
             <button type="button" class="btn btn-sm btn-warning mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "eraser")'>Eraser</button>
             <button type="button" class="btn btn-sm btn-danger mt-2" @onclick='() => js.InvokeVoidAsync("clearCanvas")'>Obriši skicu</button>
         </div>
-        <div class="color-picker">
+        <div class="color-picker mt-1">
             <label>Boja:</label>
             <input type="color" @oninput="e => SetPenColor(e.Value.ToString())" value="#000000" />
         </div>
@@ -51,53 +96,57 @@
 
     <div class="mb-3">
         @* <label for="sketchCanvas" class="form-label">Skica</label> *@
-        <div style="max-width: 500px; height: 300px; position: relative;">
-            <canvas id="sketchCanvas" width="500" height="300" style="width: 100%; height: 100%; border:1px solid #000;"></canvas>
+        <div style="max-width: 700px; height: 400px; position: relative;">
+            <canvas id="sketchCanvas" width="700" height="400" style="width: 100%; height: 100%; border:1px solid #000;"></canvas>
         </div>
-        <br />
-        <button type="button" class="btn btn-primary mt-2" @onclick="SaveSketch">Spremi skicu</button>
+        <button type="button" class="btn btn-sm btn-primary mt-2" @onclick="SaveSketch">Spremi skicu</button>
     </div>
-    <button type="submit" class="btn btn-primary">Spremi</button>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary"><i class="bi-floppy-fill"></i> Spremi</button>
+        <button type="reset" class="btn btn-secondary"><i class="bi-x-square-fill"></i> Poništi</button>
+    </div>
 </EditForm>
 
 @code {
     [Parameter]
     public int? id { get; set; }
     private Note note = new Note();
+    private Blazored.TextEditor.BlazoredTextEditor textEditor;
 
     protected override async Task OnAfterRenderAsync( bool firstRender ) {
         try {
             if( firstRender ) {
                 await js.InvokeVoidAsync( "initializeCanvas" );
             }
+            if( firstRender && note.Description != null ) {
+                await textEditor.LoadHTMLContent( note.Description );
+            }
         }
         catch( Exception ex ) {
-            Console.WriteLine( $"Error initializing javascript: {ex.Message}" );
+            Console.WriteLine( $"Error while initializing: {ex.Message}" );
         }
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (id.HasValue)
-        {
+    protected override async Task OnInitializedAsync() {
+        if( id.HasValue ) {
             note = await NotesRepository.GetNoteAsync( id.Value );
         }
     }
 
-    private async Task HandleValidSubmit()
-    {
-        try
-        {
-            if (note.Id == 0) // Create new note
+    private async Task HandleValidSubmit() {
+        try {
+            note.Description = await textEditor.GetHTML();
+
+            if( note.Id == 0 ) // Create new note
             {
                 await NotesRepository.AddNoteAsync( note );
-                NavigationManager.NavigateTo("/notes");
+                NavigationManager.NavigateTo( "/" );
 
             }
             else // Update existing note
             {
                 await NotesRepository.UpdateNoteAsync( note );
-                NavigationManager.NavigateTo( "/notes" );
+                NavigationManager.NavigateTo( "/" );
             }
         }
         catch( Exception ex ) {
@@ -109,7 +158,8 @@
     private async Task<string> GetLocationName( double latitude, double longitude ) {
         try {
             string apiKey = "AIzaSyDLji_mHwZ2tfOFO4549SKPQz2qnYYJocA"; // Replace with your API key
-            string url = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={apiKey}";
+            string url = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude.ToString( CultureInfo.InvariantCulture )},{longitude.ToString( CultureInfo.InvariantCulture )}&key={apiKey}";
+
 
             using( var httpClient = new HttpClient() ) {
                 var response = await httpClient.GetStringAsync( url );

@@ -10,6 +10,8 @@ namespace ArcheoTrack.Model {
         [Key]
         public int Id { get; set; }
         public string? Project { get; set; }
+        [DataType( DataType.Date )]
+        [DisplayFormat( DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true )]
         public DateOnly Date { get; set; } = DateOnly.FromDateTime( DateTime.Now );
         public string? Object { get; set; }
         public int Number { get; set; }

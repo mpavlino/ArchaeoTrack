@@ -1,4 +1,4 @@
-﻿@page "/notes"
+﻿@page "/"
 @using ArcheoTrack.Model
 @* @inject HttpClient HttpClient *@
 @inject ArcheoTrack.Repositories.NotesRepository NotesRepository
@@ -16,26 +16,24 @@ else {
         <thead>
             <tr>
                 <th>Datum</th>
-                <th>Broj</th>
-                <th>Sadržaj</th>
+                <th>Projekt</th>
                 <th>Akcija</th>
             </tr>
         </thead>
         <tbody>
             @foreach( var note in notes ) {
                 <tr>
-                    <td>@note.Date.ToShortDateString()</td>
-                    <td>@note.Number</td>
-                    <td>@note.Description</td>
+                    <td>@note.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@note.Project</td>
                     <td>
+                        <button class="btn btn-success btn-sm" @onclick="() => NavigateToViewNote(note.Id)">
+                            <i class="bi-eye"></i>
+                        </button>
                         <button class="btn btn-secondary btn-sm" @onclick="() => NavigateToEditNote(note.Id)">
                             <i class="bi-pencil"></i>
                         </button>
                         <button class="btn btn-danger btn-sm" @onclick="() => DeleteNote(note.Id)">
                             <i class="bi-trash"></i>
-                        </button>
-                        <button class="btn btn-success btn-sm" @onclick="() => NavigateToViewNote(note.Id)">
-                            <i class="bi-eye"></i>
                         </button>
                     </td>
                 </tr>
