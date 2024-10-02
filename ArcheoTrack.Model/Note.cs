@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ArcheoTrack.Model {
     public class Note {
-        [Key]
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string? Project { get; set; }
         [DataType( DataType.Date )]
@@ -20,7 +21,7 @@ namespace ArcheoTrack.Model {
         public string? Results { get; set; }
         public string Description { get; set; } = string.Empty;
         public string? Sketch { get; set; }
-        public virtual List<Person> People { get; set; } = new List<Person>();
+        public ICollection<Person> People { get; set; }
     }
 
 }
