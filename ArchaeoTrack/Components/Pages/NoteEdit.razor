@@ -77,11 +77,11 @@
     <div class="mb-3">
         <label class="form-label fw-bold">Alati za skiciranje</label>
         <div class="toolbox">
-            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "freeform")'>Freeform</button>
-            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "line")'>Line</button>
-            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "circle")'>Circle</button>
-            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "rectangle")'>Rectangle</button>
-            <button type="button" class="btn btn-sm btn-warning mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "eraser")'>Eraser</button>
+            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "freeform")'>Olovka</button>
+            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "line")'>Linija</button>
+            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "circle")'>Krug</button>
+            <button type="button" class="btn btn-sm btn-secondary mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "rectangle")'>Pravokutnik</button>
+            <button type="button" class="btn btn-sm btn-warning mt-2" @onclick='() => js.InvokeVoidAsync("setShapeMode", "eraser")'>Gumica</button>
             <button type="button" class="btn btn-sm btn-danger mt-2" @onclick='() => js.InvokeVoidAsync("clearCanvas")'>Obriši skicu</button>
         </div>
         <div class="color-picker mt-1">
@@ -90,7 +90,7 @@
         </div>
         <div class="pen-size">
             <label>Veličina olovke:</label>
-            <input type="range" min="1" max="10" @oninput="e => SetPenSize(int.Parse(e.Value.ToString()))" />
+            <input type="range" min="1" max="10" value="2" @oninput="e => SetPenSize(int.Parse(e.Value.ToString()))" />
         </div>
     </div>
 

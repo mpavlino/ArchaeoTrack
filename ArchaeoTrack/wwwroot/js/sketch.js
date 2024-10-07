@@ -100,6 +100,7 @@
     function getMousePos(e) {
         const rect = canvas.getBoundingClientRect();
         let x, y;
+
         if (e.touches) {
             // Handle touch events
             x = e.touches[0].clientX - rect.left;
@@ -109,8 +110,17 @@
             x = e.clientX - rect.left;
             y = e.clientY - rect.top;
         }
-        return { x, y };
+
+        // Scale the touch/mouse coordinates to account for any scaling of the canvas
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        return {
+            x: (x * scaleX),
+            y: (y * scaleY)
+        };
     }
+
 
     // Add mouse event listeners
     canvas.addEventListener('mousedown', startDrawing);
