@@ -1,5 +1,5 @@
 ﻿@page "/noteview/{id:int}"
-@using ArcheoTrack.Model
+@attribute [Authorize]
 @* @inject HttpClient HttpClient *@
 @inject ArcheoTrack.Repositories.NotesRepository NotesRepository
 @inject NavigationManager NavigationManager

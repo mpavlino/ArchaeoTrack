@@ -1,0 +1,60 @@
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Authorization;
+using Auth0.OidcClient; 
+
+public class Auth0AuthenticationStateProvider : AuthenticationStateProvider
+{
+    private ClaimsPrincipal currentUser = new ClaimsPrincipal(new ClaimsIdentity());
+    private readonly Auth0Client auth0Client;
+
+    public Auth0AuthenticationStateProvider(Auth0Client client) {
+        auth0Client = client;
+    }
+
+    public override Task<AuthenticationState> GetAuthenticationStateAsync() =>
+        Task.FromResult(new AuthenticationState(currentUser));
+
+    public Task LogInAsync()
+    {
+        var loginTask = LogInAsyncCore();
+        NotifyAuthenticationStateChanged(loginTask);
+
+        return loginTask;
+
+        async Task<AuthenticationState> LogInAsyncCore()
+        {
+            var user = await LoginWithAuth0Async();
+            currentUser = user;
+
+            return new AuthenticationState(currentUser);
+        }
+    }
+
+    private async Task<ClaimsPrincipal> LoginWithAuth0Async()
+    {
+        var authenticatedUser = new ClaimsPrincipal( new ClaimsIdentity() );
+        try {
+            var loginResult = await auth0Client.LoginAsync();
+
+            if( !loginResult.IsError ) {
+                authenticatedUser = loginResult.User;
+            }
+            return authenticatedUser;
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error occured while signing in: {ex.Message}" );
+        }
+        return authenticatedUser;
+    }
+
+    public async Task<IdentityModel.OidcClient.Browser.BrowserResultType> LogOut()
+    {
+        var logoutTask = await auth0Client.LogoutAsync();
+        currentUser = new ClaimsPrincipal(new ClaimsIdentity());
+        NotifyAuthenticationStateChanged(
+            Task.FromResult(new AuthenticationState(currentUser)));
+
+        return logoutTask;
+    }
+}

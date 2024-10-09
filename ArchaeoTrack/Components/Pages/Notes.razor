@@ -1,18 +1,18 @@
 ﻿@page "/"
-@using ArcheoTrack.Model
+@attribute [Authorize]
 @* @inject HttpClient HttpClient *@
 @inject ArcheoTrack.Repositories.NotesRepository NotesRepository
 @inject NavigationManager NavigationManager
 
-<h1>Arheološki zapisi</h1>
+@* <h3>Arheološki zapisi</h3> *@
 
-<button class="btn btn-primary" @onclick="NavigateToCreateNote"><i class="bi-plus-circle"></i> Dodaj novi zapis</button>
+<button class="btn btn-primary rounded-pill" @onclick="NavigateToCreateNote"><i class="bi-plus-circle"></i> Dodaj novi zapis</button>
 
 @if( notes == null || !notes.Any() ) {
     <p><em>Nema zapisa.</em></p>
 }
 else {
-    <table class="table table-responsive mt-3">
+    <table id="notesTable" class="table table-responsive mt-3">
         <thead>
             <tr>
                 <th>Datum</th>
@@ -26,13 +26,13 @@ else {
                     <td>@note.Date.ToString("dd/MM/yyyy")</td>
                     <td>@note.Project</td>
                     <td>
-                        <button class="btn btn-success btn-sm" @onclick="() => NavigateToViewNote(note.Id)">
+                        <button class="btn btn-success btn-sm rounded-pill" @onclick="() => NavigateToViewNote(note.Id)">
                             <i class="bi-eye"></i>
                         </button>
-                        <button class="btn btn-secondary btn-sm" @onclick="() => NavigateToEditNote(note.Id)">
+                        <button class="btn btn-secondary btn-sm rounded-pill" @onclick="() => NavigateToEditNote(note.Id)">
                             <i class="bi-pencil"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteNote(note.Id)">
+                        <button class="btn btn-danger btn-sm rounded-pill" @onclick="() => DeleteNote(note.Id)">
                             <i class="bi-trash"></i>
                         </button>
                     </td>

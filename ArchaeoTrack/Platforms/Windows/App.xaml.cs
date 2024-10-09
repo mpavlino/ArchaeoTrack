@@ -13,6 +13,8 @@ namespace ArchaeoTrack.WinUI {
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App() {
+            if( Auth0.OidcClient.Platforms.Windows.Activator.Default.CheckRedirectionActivation() )
+                return;
             this.InitializeComponent();
         }
 

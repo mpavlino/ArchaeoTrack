@@ -1,0 +1,28 @@
+﻿@* Components/LoginButton.razor *@
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<AuthorizeView>
+    <Authorized>
+        Pozdrav, @context.User.Identity.Name!
+        <a class="btn btn-sm btn-primary rounded-pill" href="#" @onclick="Logout">Log out</a>
+    </Authorized>
+    <NotAuthorized>
+        <a class="btn btn-sm btn-primary rounded-pill" href="#" @onclick="Login">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    public async Task Login() {
+        await ((Auth0AuthenticationStateProvider) AuthenticationStateProvider)
+            .LogInAsync();
+        NavigationManager.NavigateTo( "/" );
+    }
+
+    public async Task Logout() {
+        await ((Auth0AuthenticationStateProvider) AuthenticationStateProvider)
+            .LogOut();
+        NavigationManager.NavigateTo( "/" );
+    }
+}
