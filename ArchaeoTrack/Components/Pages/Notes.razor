@@ -3,10 +3,11 @@
 @* @inject HttpClient HttpClient *@
 @inject ArcheoTrack.Repositories.NotesRepository NotesRepository
 @inject NavigationManager NavigationManager
+@inject IJSRuntime js;
 
 @* <h3>Arheološki zapisi</h3> *@
 
-<button class="btn btn-primary rounded-pill" @onclick="NavigateToCreateNote"><i class="bi-plus-circle"></i> Dodaj novi zapis</button>
+<button class="btn btn-primary rounded-pill mb-4" @onclick="NavigateToCreateNote"><i class="bi-plus-circle"></i> Dodaj novi zapis</button>
 
 @if( notes == null || !notes.Any() ) {
     <p><em>Nema zapisa.</em></p>
@@ -44,9 +45,17 @@ else {
 
 @code {
     private List<Note> notes = new List<Note>();
+    private bool isTableInitialized = false;
 
     protected override async Task OnInitializedAsync() {
         notes = await NotesRepository.GetNotesAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync( bool firstRender ) {
+        if( firstRender && !isTableInitialized ) {
+            await js.InvokeVoidAsync( "initializeDataTable" );
+            isTableInitialized = true;  // Mark as initialized
+        }
     }
 
 
