@@ -45,18 +45,22 @@ else {
 
 @code {
     private List<Note> notes = new List<Note>();
-    private bool isTableInitialized = false;
+    //private bool isTableInitialized = false;
 
     protected override async Task OnInitializedAsync() {
         notes = await NotesRepository.GetNotesAsync();
+        //isTableInitialized = true;
     }
 
-    protected override async Task OnAfterRenderAsync( bool firstRender ) {
-        if( firstRender && !isTableInitialized ) {
-            await js.InvokeVoidAsync( "initializeDataTable" );
-            isTableInitialized = true;  // Mark as initialized
-        }
-    }
+    // protected override async Task OnAfterRenderAsync( bool firstRender ) {
+    //     if( firstRender && notes.Any() ) {
+    //         // Load the JavaScript file dynamically
+    //         await js.InvokeVoidAsync( "import", "./js/datatable-init.js" );
+
+    //         // Initialize the DataTable
+    //         await js.InvokeVoidAsync( "initializeDataTableIfExists", "#notesTable" );
+    //     }
+    // }
 
 
     private void NavigateToCreateNote() {
