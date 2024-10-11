@@ -2,6 +2,7 @@
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
+@inject ArchaeoTrack.Repositories.UsersRepository UsersRepository
 
 <AuthorizeView>
     <Authorized>
@@ -30,6 +31,11 @@
 
     protected override async Task OnInitializedAsync() {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        bool isUserAuthenticated = state.User.Identity?.IsAuthenticated ?? false;
+        if( isUserAuthenticated ) {
+            var users = await UsersRepository.GetAuth0Users();
+            await UsersRepository.SaveUsersToLocalDb( users );
+        }
 
         Picture = state.User.Claims
                     .Where( c => c.Type.Equals( "picture" ) )

@@ -1,5 +1,5 @@
-﻿using ArcheoTrack.DAL;
-using ArcheoTrack.Repositories;
+﻿using ArchaeoTrack.Repositories;
+using ArcheoTrack.DAL;
 using Auth0.OidcClient;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +25,7 @@ namespace ArchaeoTrack {
             builder.Services.AddMauiBlazorWebView();
             //builder.Services.AddScoped( sp => new HttpClient { BaseAddress = new Uri( "https://localhost:7250/" ) } );
             builder.Services.AddScoped<NotesRepository>();
+            builder.Services.AddScoped<UsersRepository>();
 
             // 👇 new code
             builder.Services.AddSingleton( new Auth0Client( new() {

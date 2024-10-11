@@ -1,7 +1,8 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
-using Auth0.OidcClient; 
+using Auth0.OidcClient;
+using ArchaeoTrack.Repositories;
 
 public class Auth0AuthenticationStateProvider : AuthenticationStateProvider
 {

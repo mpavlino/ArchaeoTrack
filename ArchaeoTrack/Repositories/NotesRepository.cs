@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ArcheoTrack.Repositories {
+namespace ArchaeoTrack.Repositories {
     public class NotesRepository {
         private readonly AppDbContext _context;
 
