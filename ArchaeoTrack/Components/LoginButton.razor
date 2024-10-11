@@ -5,15 +5,17 @@
 
 <AuthorizeView>
     <Authorized>
-        Pozdrav, @context.User.Identity.Name!
-        <a class="btn btn-sm btn-primary rounded-pill" href="#" @onclick="Logout">Log out</a>
+        Pozdrav, @context.User.Identity.Name! <img class="ms-1" src="@Picture" width="44">
+        <a class="btn btn-sm btn-primary rounded-pill" href="#" @onclick="Logout">Odjavi se</a>
     </Authorized>
     <NotAuthorized>
-        <a class="btn btn-sm btn-primary rounded-pill" href="#" @onclick="Login">Log in</a>
+        <a class="btn btn-sm btn-primary rounded-pill" href="#" @onclick="Login">Prijavi se</a>
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
+    private string Picture = "";
+
     public async Task Login() {
         await ((Auth0AuthenticationStateProvider) AuthenticationStateProvider)
             .LogInAsync();
@@ -24,5 +26,16 @@
         await ((Auth0AuthenticationStateProvider) AuthenticationStateProvider)
             .LogOut();
         NavigationManager.NavigateTo( "/" );
+    }
+
+    protected override async Task OnInitializedAsync() {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        Picture = state.User.Claims
+                    .Where( c => c.Type.Equals( "picture" ) )
+                    .Select( c => c.Value )
+                    .FirstOrDefault() ?? string.Empty;
+
+        await base.OnInitializedAsync();
     }
 }

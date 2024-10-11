@@ -1,6 +1,7 @@
 ﻿@page "/"
 @attribute [Authorize]
 @* @inject HttpClient HttpClient *@
+@using C1.Blazor.Grid
 @inject ArcheoTrack.Repositories.NotesRepository NotesRepository
 @inject NavigationManager NavigationManager
 @inject IJSRuntime js;
@@ -13,34 +14,39 @@
     <p><em>Nema zapisa.</em></p>
 }
 else {
-    <table id="notesTable" class="table table-responsive mt-3">
-        <thead>
-            <tr>
-                <th>Datum</th>
-                <th>Projekt</th>
-                <th>Akcija</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach( var note in notes ) {
+    @* <FlexGrid ItemsSource="notes"></FlexGrid> *@
+
+    <body onbeforeunload="TestDataTablesRemove('#notesTable')">
+
+        <table id="notesTable" class="table table-responsive mt-3">
+            <thead>
                 <tr>
-                    <td>@note.Date.ToString("dd/MM/yyyy")</td>
-                    <td>@note.Project</td>
-                    <td>
-                        <button class="btn btn-success btn-sm rounded-pill" @onclick="() => NavigateToViewNote(note.Id)">
-                            <i class="bi-eye"></i>
-                        </button>
-                        <button class="btn btn-secondary btn-sm rounded-pill" @onclick="() => NavigateToEditNote(note.Id)">
-                            <i class="bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-danger btn-sm rounded-pill" @onclick="() => DeleteNote(note.Id)">
-                            <i class="bi-trash"></i>
-                        </button>
-                    </td>
+                    <th>Datum</th>
+                    <th>Projekt</th>
+                    <th data-sortable="false">Akcija</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach( var note in notes ) {
+                    <tr>
+                        <td>@note.Date.ToString( "dd/MM/yyyy" )</td>
+                        <td>@note.Project</td>
+                        <td>
+                            <button class="btn btn-success btn-sm rounded-pill" @onclick="() => NavigateToViewNote(note.Id)">
+                                <i class="bi-eye"></i>
+                            </button>
+                            <button class="btn btn-secondary btn-sm rounded-pill" @onclick="() => NavigateToEditNote(note.Id)">
+                                <i class="bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm rounded-pill" @onclick="() => DeleteNote(note.Id)">
+                                <i class="bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </body>
 }
 
 @code {
@@ -52,15 +58,15 @@ else {
         //isTableInitialized = true;
     }
 
-    // protected override async Task OnAfterRenderAsync( bool firstRender ) {
-    //     if( firstRender && notes.Any() ) {
-    //         // Load the JavaScript file dynamically
-    //         await js.InvokeVoidAsync( "import", "./js/datatable-init.js" );
+    protected override async Task OnAfterRenderAsync( bool firstRender ) {
+        if( firstRender && notes.Any() ) {
+            // Load the JavaScript file dynamically
+            //await js.InvokeVoidAsync( "import", "./js/datatable-init.js" );
 
-    //         // Initialize the DataTable
-    //         await js.InvokeVoidAsync( "initializeDataTableIfExists", "#notesTable" );
-    //     }
-    // }
+            // Initialize the DataTable
+            await js.InvokeVoidAsync( "initializeDataTableIfExists", "#notesTable" );
+        }
+    }
 
 
     private void NavigateToCreateNote() {
