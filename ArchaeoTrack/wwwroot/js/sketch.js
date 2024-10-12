@@ -1,7 +1,7 @@
 ﻿window.initializeCanvas = function () {
     let canvas = document.getElementById('sketchCanvas');
-    console.log(canvas);  // Check if canvas is found
     let ctx;
+
     if (canvas) {
         ctx = canvas.getContext('2d');
     } else {
@@ -101,17 +101,21 @@
         const rect = canvas.getBoundingClientRect();
         let x, y;
 
-        if (e.touches) {
+        if (e.touches && e.touches.length > 0) {
             // Handle touch events
             x = e.touches[0].clientX - rect.left;
             y = e.touches[0].clientY - rect.top;
+        } else if (e.changedTouches && e.changedTouches.length > 0) {
+            // Handle touchend events
+            x = e.changedTouches[0].clientX - rect.left;
+            y = e.changedTouches[0].clientY - rect.top;
         } else {
             // Handle mouse events
             x = e.clientX - rect.left;
             y = e.clientY - rect.top;
         }
 
-        // Scale the touch/mouse coordinates to account for any scaling of the canvas
+        // Scale the coordinates to account for any canvas scaling
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
 
@@ -120,7 +124,6 @@
             y: (y * scaleY)
         };
     }
-
 
     // Add mouse event listeners
     canvas.addEventListener('mousedown', startDrawing);
@@ -137,7 +140,10 @@
         e.preventDefault(); // Prevent scrolling
         draw(e);
     });
-    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchend', function (e) {
+        e.preventDefault(); // Finalize drawing
+        stopDrawing(e);
+    });
 
     // Clear the canvas on double-click
     canvas.addEventListener('dblclick', function () {

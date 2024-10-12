@@ -31,16 +31,21 @@
 
     protected override async Task OnInitializedAsync() {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        bool isUserAuthenticated = state.User.Identity?.IsAuthenticated ?? false;
-        if( isUserAuthenticated ) {
-            var users = await UsersRepository.GetAuth0Users();
-            await UsersRepository.SaveUsersToLocalDb( users );
-        }
+        try {
+            bool isUserAuthenticated = state.User.Identity?.IsAuthenticated ?? false;
+            if( isUserAuthenticated ) {
+                var users = await UsersRepository.GetAuth0Users();
+                await UsersRepository.SaveUsersToLocalDb( users );
+            }
 
-        Picture = state.User.Claims
-                    .Where( c => c.Type.Equals( "picture" ) )
-                    .Select( c => c.Value )
-                    .FirstOrDefault() ?? string.Empty;
+            Picture = state.User.Claims
+                        .Where( c => c.Type.Equals( "picture" ) )
+                        .Select( c => c.Value )
+                        .FirstOrDefault() ?? string.Empty;
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error while initializing: {ex.Message}" );
+        }
 
         await base.OnInitializedAsync();
     }

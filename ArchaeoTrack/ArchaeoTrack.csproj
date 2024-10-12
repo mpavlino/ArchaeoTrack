@@ -61,7 +61,7 @@
         <PackageReference Include="Auth0.OidcClient.MAUI" Version="1.0.1" />
         <PackageReference Include="Blazored.TextEditor" Version="1.1.0" />
         <PackageReference Include="C1.Blazor.Grid" Version="8.0.20241.927" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.10" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />

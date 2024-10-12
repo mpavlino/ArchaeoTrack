@@ -12,6 +12,7 @@ namespace ArcheoTrack.Model
         public int Id { get; set; }
         public string Auth0UserId { get; set; }
         public string Username { get; set; }
+        public ICollection<NoteUser> NoteUsers { get; set; }
     }
 
 }
