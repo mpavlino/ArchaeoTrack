@@ -14,7 +14,7 @@ namespace ArcheoTrack.DAL {
         }
 
         public DbSet<Note> Notes { get; set; }
-        public DbSet<User> User { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<NoteUser> NoteUsers { get; set; }
 
         //protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder ) {
