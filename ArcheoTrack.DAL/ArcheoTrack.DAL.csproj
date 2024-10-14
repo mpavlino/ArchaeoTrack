@@ -20,11 +20,5 @@
     <ProjectReference Include="..\ArcheoTrack.Model\ArcheoTrack.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-	<None Update="notes.db">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-  </ItemGroup>
-
 
 </Project>

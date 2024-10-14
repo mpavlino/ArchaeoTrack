@@ -91,6 +91,10 @@
             <label>Veličina olovke:</label>
             <input type="range" min="1" max="10" value="2" @oninput="e => SetPenSize(int.Parse(e.Value.ToString()))" />
         </div>
+        <div>
+            <button type="button" class="btn btn-sm btn-primary mt-2" @onclick='() => js.InvokeVoidAsync("undo")'><i class="bi bi-arrow-counterclockwise"></i></button>
+            <button type="button" class="btn btn-sm btn-primary mt-2" @onclick='() => js.InvokeVoidAsync("redo")'><i class="bi bi-arrow-clockwise"></i></button>
+        </div>
     </div>
 
     <div class="mb-3">
@@ -206,7 +210,7 @@
 
             if( location != null ) {
                 string apiKey = "2a4dff925656a1f1cdbb0f7f67d0ec3e";
-                string url = $"https://api.openweathermap.org/data/2.5/weather?lat={location.Latitude}&lon={location.Longitude}&units=metric&appid={apiKey}";
+                string url = $"https://api.openweathermap.org/data/2.5/weather?lat={location.Latitude}&lon={location.Longitude}&units=metric&appid={apiKey}&lang=hr";
 
                 using( var httpClient = new HttpClient() ) {
                     var response = await httpClient.GetStringAsync( url );

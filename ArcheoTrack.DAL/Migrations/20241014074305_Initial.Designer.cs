@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArcheoTrack.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241012184337_UserDatabaseTable")]
-    partial class UserDatabaseTable
+    [Migration("20241014074305_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,7 +96,7 @@ namespace ArcheoTrack.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ArcheoTrack.Model.NoteUser", b =>

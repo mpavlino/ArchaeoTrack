@@ -11,8 +11,10 @@ namespace ArcheoTrack.Model
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string Auth0UserId { get; set; }
-        public string Username { get; set; }
-        public ICollection<NoteUser> NoteUsers { get; set; }
+        public string? Email { get; set; }
+        public string Nickname { get; set; }
+        public string FullName { get; set; }
+        public ICollection<NoteUser> NoteUsers { get; set; } = new List<NoteUser>();
     }
 
 }

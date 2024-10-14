@@ -51,7 +51,8 @@ namespace ArchaeoTrack {
         private static void InitializeDatabase( IServiceProvider serviceProvider ) {
             using( var scope = serviceProvider.CreateScope() ) {
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                dbContext.Database.EnsureCreated(); // Creates the database if it doesn't exist
+                //dbContext.Database.EnsureCreated(); // Creates the database if it doesn't exist
+                dbContext.Database.Migrate();
             }
         }
 

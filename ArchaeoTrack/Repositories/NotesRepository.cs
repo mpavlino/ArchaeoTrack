@@ -21,7 +21,7 @@ namespace ArchaeoTrack.Repositories {
         }
 
         public async Task AddNoteAsync( Note note ) {
-            _context.Notes.Add( note );
+            await _context.Notes.AddAsync( note );
             await _context.SaveChangesAsync();
         }
 

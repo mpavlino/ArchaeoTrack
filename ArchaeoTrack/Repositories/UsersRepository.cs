@@ -62,10 +62,13 @@ namespace ArchaeoTrack.Repositories {
             foreach( var auth0User in auth0Users ) {
                 var user = new User {
                     Auth0UserId = auth0User.UserId,
-                    Username = auth0User.Username
+                    Email = auth0User.Email,
+                    FullName = auth0User.FullName,
+                    Nickname = auth0User.Nickname
                 };
                 await _context.AddAsync( user );
             }
+            await _context.SaveChangesAsync();
         }
 
 

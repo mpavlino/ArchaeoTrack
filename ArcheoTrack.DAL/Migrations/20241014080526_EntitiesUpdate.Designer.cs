@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArcheoTrack.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241002085904_ModelUpdate")]
-    partial class ModelUpdate
+    [Migration("20241014080526_EntitiesUpdate")]
+    partial class EntitiesUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,26 +59,32 @@ namespace ArcheoTrack.DAL.Migrations
                     b.ToTable("Notes");
                 });
 
-            modelBuilder.Entity("ArcheoTrack.Model.Person", b =>
+            modelBuilder.Entity("ArcheoTrack.Model.NoteUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("NoteId")
+                    b.Property<int>("NoteId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NoteUsers");
+                });
+
+            modelBuilder.Entity("ArcheoTrack.Model.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Auth0UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -86,21 +92,7 @@ namespace ArcheoTrack.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NoteId");
-
-                    b.ToTable("Person");
-                });
-
-            modelBuilder.Entity("ArcheoTrack.Model.Person", b =>
-                {
-                    b.HasOne("ArcheoTrack.Model.Note", null)
-                        .WithMany("People")
-                        .HasForeignKey("NoteId");
-                });
-
-            modelBuilder.Entity("ArcheoTrack.Model.Note", b =>
-                {
-                    b.Navigation("People");
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }

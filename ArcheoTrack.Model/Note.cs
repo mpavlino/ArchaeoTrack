@@ -21,7 +21,7 @@ namespace ArcheoTrack.Model {
         public string? Results { get; set; }
         public string Description { get; set; } = string.Empty;
         public string? Sketch { get; set; }
-        public ICollection<NoteUser> NoteUsers { get; set; }
+        public ICollection<NoteUser> NoteUsers { get; set; } = new List<NoteUser>();
     }
 
 }
