@@ -15,7 +15,7 @@ namespace ArcheoTrack.Model {
         [DisplayFormat( DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true )]
         public DateOnly Date { get; set; } = DateOnly.FromDateTime( DateTime.Now );
         public string? Object { get; set; }
-        public int Number { get; set; }
+        public string? People { get; set; }
         public string? Location { get; set; }
         public string? Weather { get; set; }
         public string? Results { get; set; }

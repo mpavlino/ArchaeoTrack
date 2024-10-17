@@ -23,16 +23,16 @@ else {
                 <tr>
                     <th>Datum</th>
                     <th>Projekt</th>
-                    <th data-sortable="false">Akcija</th>
+                    <th data-sortable="false" class="text-center">Akcije</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach( var note in notes ) {
                     <tr>
                         <td>@note.Date.ToString( "dd/MM/yyyy" )</td>
-                        <td>@note.Project</td>
+                        <td>@Truncate(note.Project, 14)</td>
                         <td>
-                            <button class="btn btn-success btn-sm rounded-pill" @onclick="() => NavigateToViewNote(note.Id)">
+                            <button class="btn btn-primary btn-sm rounded-pill" @onclick="() => NavigateToViewNote(note.Id)">
                                 <i class="bi-eye"></i>
                             </button>
                             <button class="btn btn-secondary btn-sm rounded-pill" @onclick="() => NavigateToEditNote(note.Id)">
@@ -82,12 +82,24 @@ else {
     }
 
     private async Task DeleteNote( int id ) {
-        try {
-            await NotesRepository.DeleteNoteAsync( id );
-            NavigationManager.Refresh( true );
+        bool confirmed = await js.InvokeAsync<bool>( "showSweetAlertConfirm", "Jeste li sigurni da želite obrisati ovaj zapis?" );
+
+        if( confirmed ) {
+            try {
+                await NotesRepository.DeleteNoteAsync( id );
+                notes = await NotesRepository.GetNotesAsync();
+            }
+            catch( Exception ex ) {
+                Console.WriteLine( $"Error deleting note: {ex.Message}" );
+            }
         }
-        catch( Exception ex ) {
-            Console.WriteLine( $"Error deleting note: {ex.Message}" );
-        }
+    }
+
+
+
+    public string Truncate( string value, int maxLength ) {
+        if( string.IsNullOrEmpty( value ) ) return value;
+        //return value.Length <= maxLength ? value : value.Substring( 0, maxLength ) + "...";
+        return value.Length <= maxLength ? value : value.Substring( 0, maxLength );
     }
 }

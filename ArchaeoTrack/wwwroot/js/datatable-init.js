@@ -34,3 +34,17 @@ function TestDataTablesRemove(table) {
     });
 }
 
+window.showSweetAlertConfirm = async function (message) {
+    const result = await Swal.fire({
+        title: 'Potvrdi brisanje',
+        text: message,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Da, obriši zapis!',
+        cancelButtonText: 'Odustani'
+    });
+
+    return result.isConfirmed;
+};
+
+

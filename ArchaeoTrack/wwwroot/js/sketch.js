@@ -199,7 +199,11 @@ function getMousePos(e) {
     const rect = canvas.getBoundingClientRect();
     let x, y;
 
-    if (e.touches && e.touches.length > 0) {
+    // Use changedTouches for touchend to get the last touch point
+    if (e.changedTouches && e.changedTouches.length > 0) {
+        x = e.changedTouches[0].clientX - rect.left;
+        y = e.changedTouches[0].clientY - rect.top;
+    } else if (e.touches && e.touches.length > 0) {
         x = e.touches[0].clientX - rect.left;
         y = e.touches[0].clientY - rect.top;
     } else {
