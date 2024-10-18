@@ -1,4 +1,5 @@
-﻿using ArchaeoTrack.Repositories;
+﻿using ArchaeoTrack.Interfaces;
+using ArchaeoTrack.Repositories;
 using ArcheoTrack.DAL;
 using Auth0.OidcClient;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -26,7 +27,13 @@ namespace ArchaeoTrack {
             //builder.Services.AddScoped( sp => new HttpClient { BaseAddress = new Uri( "https://localhost:7250/" ) } );
             builder.Services.AddScoped<NotesRepository>();
             builder.Services.AddScoped<UsersRepository>();
-
+#if ANDROID
+            builder.Services.AddTransient<IFileDownloader, AndroidFileDownloader>(); // For Android
+#elif IOS
+            builder.Services.AddTransient<IFileDownloader, iOSFileDownloader>(); // For iOS
+#elif WINDOWS
+            builder.Services.AddTransient<IFileDownloader, WinUI.WindowsFileDownloader>(); // For Windows
+#endif
             // 👇 new code
             builder.Services.AddSingleton( new Auth0Client( new() {
                 Domain = "dev-cykt662hye6rkget.eu.auth0.com",

@@ -1,8 +1,11 @@
 ﻿@page "/noteview/{id:int}"
+@using ArchaeoTrack.Interfaces
 @attribute [Authorize]
 @* @inject HttpClient HttpClient *@
 @inject ArchaeoTrack.Repositories.NotesRepository NotesRepository
 @inject NavigationManager NavigationManager
+@inject IJSRuntime js;
+@inject IFileDownloader fileDownloader;
 
 @* <h1>Pogledaj zapis</h1> *@
 
@@ -48,16 +51,17 @@
     <div class="mb-3">
         <label for="sketch" class="form-label fw-bold">Skica</label>
         @if( !string.IsNullOrEmpty( note.Sketch ) ) {
-            <img src="@note.Sketch" alt="Sketch" style="max-width: 100%; height:400px;" />
+            <img id="sketchImage" src="@note.Sketch" alt="Sketch" style="max-width: 100%; height:400px;" />
             <br />
-            <a href="@note.Sketch" download="sketch.png">
-                <button class="btn btn-primary mt-2"><i class="bi-download"></i> Preuzmi skicu</button>
-            </a>
+            <button class="btn btn-primary mt-2" @onclick="DownloadSketch">
+                <i class="bi-download"></i> Preuzmi skicu
+            </button>
         }
         else {
             <p>No sketch available.</p>
         }
     </div>
+
 
 }
 
@@ -68,5 +72,24 @@
 
     protected override async Task OnInitializedAsync() {
         note = await NotesRepository.GetNoteAsync(id);
+    }
+
+    private async Task DownloadSketch() {
+        try
+        {
+            if (!string.IsNullOrEmpty(note.Sketch))
+            {
+                // Call the JavaScript function to download the image
+                // await js.InvokeVoidAsync("downloadImage", note.Sketch, "skica.png");
+                // var downloader = DependencyService.Get<IFileDownloader>();
+                // downloader.DownloadFile(note.Sketch);
+                fileDownloader.DownloadFile(note.Sketch);
+
+                await DisplayAlert( "Alert", "You have been alerted", "OK" );
+            }
+        }
+        catch( Exception ex ) {
+            Console.WriteLine( $"Error occured while downloading sketch: {ex.Message}" );
+        }
     }
 }
