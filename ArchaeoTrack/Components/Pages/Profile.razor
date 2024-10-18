@@ -2,11 +2,17 @@
 @attribute [Authorize]
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<h1>Pozdrav, @Username!</h1> 
-
+<div class="mb-3">
+    <label for="text" class="form-label fw-bold">Naziv</label>
+    <p>@Username</p>
+</div>
+@if(!String.IsNullOrEmpty(Picture)) {
+    <div>
+        <label for="text" class="form-label fw-bold">Slika profila</label>
+    </div>
+    <img src="@Picture">
+}
 @* <p>Welcome to your new app.</p> *@
-
-<img src="@Picture">
 
 @code {
     private string Username = "Anonymous User";

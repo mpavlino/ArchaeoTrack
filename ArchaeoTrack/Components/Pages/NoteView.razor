@@ -84,8 +84,7 @@
                 // var downloader = DependencyService.Get<IFileDownloader>();
                 // downloader.DownloadFile(note.Sketch);
                 fileDownloader.DownloadFile(note.Sketch);
-
-                await DisplayAlert( "Alert", "You have been alerted", "OK" );
+                await App.Current.MainPage.DisplayAlert("Alert", "You have been alerted", "OK");
             }
         }
         catch( Exception ex ) {
