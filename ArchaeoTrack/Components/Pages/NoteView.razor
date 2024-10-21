@@ -84,7 +84,7 @@
                 // var downloader = DependencyService.Get<IFileDownloader>();
                 // downloader.DownloadFile(note.Sketch);
                 fileDownloader.DownloadFile(note.Sketch);
-                await App.Current.MainPage.DisplayAlert("Alert", "You have been alerted", "OK");
+                await App.Current.MainPage.DisplayAlert("Preuzimanje dovršeno", "Preuzeli ste sliku skice na uređaj", "U redu");
             }
         }
         catch( Exception ex ) {

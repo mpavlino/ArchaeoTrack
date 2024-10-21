@@ -6,7 +6,10 @@
 
 <AuthorizeView>
     <Authorized>
-        Pozdrav, @context.User.Identity.Name! <img class="ms-1" src="@Picture" width="44">
+        <h6 class="mb-0">@context.User.Identity.Name</h6> 
+        <img src="@Picture" width="44">
+        <div></div>
+        <div></div>
         <a class="btn btn-sm btn-primary rounded-pill" href="#" @onclick="Logout">Odjavi se</a>
     </Authorized>
     <NotAuthorized>

@@ -16,6 +16,8 @@ window.initializeCanvas = function () {
         console.error("Canvas not found");
         return;
     }
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
     ctx = canvas.getContext('2d');
 
     // Clear the canvas and reset arrays on initialization
