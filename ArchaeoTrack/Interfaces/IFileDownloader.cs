@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace ArchaeoTrack.Interfaces {
     public interface IFileDownloader {
-        void DownloadFile( string base64Image );
+        void DownloadFile( string base64Image, string fileName );
     }
 }

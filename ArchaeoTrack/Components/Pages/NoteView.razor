@@ -83,7 +83,7 @@
                 // await js.InvokeVoidAsync("downloadImage", note.Sketch, "skica.png");
                 // var downloader = DependencyService.Get<IFileDownloader>();
                 // downloader.DownloadFile(note.Sketch);
-                fileDownloader.DownloadFile(note.Sketch);
+                fileDownloader.DownloadFile(note.Sketch, String.Format("skica_{0}", note.Project ?? "0"));
                 await App.Current.MainPage.DisplayAlert("Preuzimanje dovršeno", "Preuzeli ste sliku skice na uređaj", "U redu");
             }
         }

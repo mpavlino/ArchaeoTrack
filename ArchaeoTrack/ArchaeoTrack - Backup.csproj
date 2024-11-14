@@ -20,7 +20,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
         <Nullable>enable</Nullable>
-<!---->
+
         <!-- Display name -->
         <ApplicationTitle>ArchaeoTrack</ApplicationTitle>
 
@@ -37,25 +37,22 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-        <AndroidSigningKeyStore></AndroidSigningKeyStore>
-        <UserSecretsId>7ac66e06-7782-47b2-8ef4-87f310a0c01a</UserSecretsId>
+        <AndroidSigningKeyStore>archaeoTrack.keystore</AndroidSigningKeyStore>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
-      <AndroidKeyStore>False</AndroidKeyStore>
-      <AndroidSigningStorePass></AndroidSigningStorePass>
-      <AndroidSigningKeyPass></AndroidSigningKeyPass>
-      <AndroidSigningKeyAlias></AndroidSigningKeyAlias>
+      <AndroidKeyStore>True</AndroidKeyStore>
+      <AndroidSigningStorePass>chimpsw8420</AndroidSigningStorePass>
+      <AndroidSigningKeyPass>TestPSW80!</AndroidSigningKeyPass>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
-      <AndroidKeyStore>False</AndroidKeyStore>
+      <AndroidKeyStore>True</AndroidKeyStore>
       <AndroidPackageFormat>aab</AndroidPackageFormat>
       <AndroidUseAapt2>True</AndroidUseAapt2>
       <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-      <AndroidSigningStorePass></AndroidSigningStorePass>
-      <AndroidSigningKeyPass></AndroidSigningKeyPass>
-      <AndroidSigningKeyAlias></AndroidSigningKeyAlias>
+      <AndroidSigningStorePass>chimpsw8420</AndroidSigningStorePass>
+      <AndroidSigningKeyPass>TestPSW80!</AndroidSigningKeyPass>
     </PropertyGroup>
 
     <ItemGroup>
@@ -82,8 +79,8 @@
     <ItemGroup>
         <PackageReference Include="Auth0.OidcClient.MAUI" Version="1.0.1" />
         <PackageReference Include="Blazored.TextEditor" Version="1.1.0" />
+        <!--<PackageReference Include="C1.Blazor.Grid" Version="8.0.20241.927" />-->
         <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.10" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />

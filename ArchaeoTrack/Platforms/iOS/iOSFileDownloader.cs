@@ -12,7 +12,7 @@ using UIKit;
 [assembly: Dependency( typeof( iOSFileDownloader ) )]
 namespace ArchaeoTrack {
     public class iOSFileDownloader : IFileDownloader {
-        public void DownloadFile( string base64Image ) {
+        public void DownloadFile( string base64Image, string fileName ) {
             try {
                 // Convert base64 string to byte array
                 var base64 = base64Image.Substring( base64Image.IndexOf( "," ) + 1 );
@@ -20,7 +20,7 @@ namespace ArchaeoTrack {
 
                 // Get the documents directory
                 var documentsDirectory = Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments );
-                var fileName = "skica.png"; // Set your desired file name
+                //var fileName = "skica.png"; // Set your desired file name
                 var filePath = Path.Combine( documentsDirectory, fileName );
 
                 // Write the file to storage
